@@ -1,0 +1,340 @@
+author Matthew Millard
+date   : 27 March 2019
+version: 0.1
+
+Note: 
+  All of the documentation is currently written for users of Linux, and 
+  specifically Ubuntu. In addition it is assumed that the reader has basic
+  familarity with Ubuntu, the command shell, and the apt system. 
+
+================================================================================
+Getting Started
+================================================================================
+
+1. Each example contains its own README.md file that has instructions to run the
+   example, and then a detailed guided tour of the code.
+
+2. Prior to attempting to run the examples, please check that your installation
+   has the necessary libraries. These examples make use of extra libraries 
+   beyond RBDL - installation instructions for each of the libraries appears
+   in the 'Setting up a new system' section.
+
+================================================================================
+Minimum System Requirements
+================================================================================
+
+  All examples except and 'constrainedDoublePendulum' and 
+  'walkingInverseDynamics' should run with 
+
+  :RBDL   :any version more recent than July 2018
+  :Lua51
+  :Boost
+  :Meshup :any version
+
+  The 'constrainedDoublePendulum' example requires rbdl-orb. See below
+  for installation instructions.
+
+  The 'walkingInverseDynamics' example requires the most recent rbdl-orb
+  version, python3, as well as numpy, scipy, and matplotlib. 
+
+  For instructions on installing any of these components please see 
+  'Setting up a new system'
+
+================================================================================
+Setting up a new system
+================================================================================
+
+0. Prior to Installation
+
+    Before proceeding, open up a terminal and type
+      sudo apt update
+      sudo apt upgrade
+
+
+1. Install git and mercurial
+
+    sudo apt install git-core
+    sudo apt install mercurial
+
+2. Install cmake, and cmake-curses (optional)
+
+    sudo apt install cmake
+    sudo apt install cmake-curses-gui
+
+3. Install a c++ compiler
+
+    sudo apt-get install build-essential
+
+
+4. Install doxygen
+  
+    sudo apt install doxygen
+
+5. Install Eigen3, a fast linear algebra package
+
+    sudo apt install libeigen3-dev
+
+  If for some reason this is not new enough (it should be) obtain the latest 
+  version using the link, and build instructions
+    http://eigen.tuxfamily.org/index.php?title=Main_Page
+
+6. Install graphics libraries needed by Meshup & Puppeteer 
+
+    sudo apt install ffmpeg-dev
+    sudo apt install libavutil-dev
+    sudo apt install libavcodec-dev
+    sudo apt install libavutil-dev 
+    sudo apt install libav-tools
+    sudo apt install libavformat-dev
+    sudo apt install libswscale-dev
+
+7. Install Lua51 which is need so that RBDL can read in Lua-based models
+
+    sudo apt install lua5.1
+    sudo apt install liblua5.1-0-dev
+
+8. Install UnitTest++ which is needed to run all of RBDL's numerical test code
+
+    sudo apt install libunittest++-dev
+
+9. Install Boost, which is used by nearly all of the example code
+
+    sudo apt install libboost-all-dev
+
+10. Install Python3, NumPy, SciPy, and Matplotlib if you want to run the 
+   'walkingInverseDynamics'. 
+
+   Linux:
+    If you are using Ubuntu 18.04 or later python3 comes pre-installed.
+    To check if you have python3, in a command shell type
+
+    python3 -V
+
+    If you already have python3 installed system-wide then you can get the
+    remaining libraries with
+
+    sudo apt install python3-numpy python3-scipy python3-matplotlib
+
+    If you are not using Ubuntu 18.04, and do not currently have python3, please
+    look for instructions online to install these libraries on your system.     
+
+11. NOT REQUIRED FOR THE EXAMPLES
+    If you need to use the torque-muscle-fitting algorithms in the muscle
+    addon, you need to install Ipopt.
+
+    One of the easiest ways to do this is to get the Ipopt code as a tarball
+    and follow the instructions here:
+
+    https://www.coin-or.org/Ipopt/documentation/node12.html#SECTION00042300000000000000
+
+    Instructions to build the code appear in the README located in the 
+    Ipopt folder
+
+    As of March 2019 all of the muscle fitting code has been tested with 
+    Ipopt-3.12.8. To use Ipopt with RBDL you will need to set the 
+    CUSTOM_IPOPT_PATH to the main Ipopt directory.
+----------
+
+12. rbdl-orb: (https://github.com/ORB-HD/rbdl-orb)
+
+  Linux:
+    The example below assumes that you are cloning rbdl into a folder called
+    'orbGitHubCode' located in '/home/YOUR-USER-ID/dev/'. You do not have to 
+    use this folder structure. If you would like to use this folder structure
+    be sure to create the folders 'dev' and 'orbGitHubCode' prior to starting
+
+  12a. Get rbdl-orb 
+
+    cd ~/dev/orbGitHubCode/
+    git clone https://github.com/ORB-HD/rbdl-orb.git
+
+  12b. Set up the build and install folders
+    mkdir rbdl-orb-release-build
+    mkdir rbdl-orb-release-install
+    
+  12c. Run ccmake on rbdl-orb from the rbdl-orb-release-build folder
+    cd rbdl-orb-release-build
+    ccmake ../rbdl-orb
+
+  12d. Configure the rbdl-orb build after ccmake starts:
+
+    -Press 'c' to configure 
+    -To run the examples, make sure the following options are set:
+
+      CMAKE_BUILD_TYPE                 Release                                      
+      CMAKE_INSTALL_PREFIX             /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install
+      RBDL_BUILD_ADDON_BENCHMARK       OFF                                          
+      RBDL_BUILD_ADDON_GEOMETRY        ON                                           
+      RBDL_BUILD_ADDON_LUAMODEL        ON                                           
+      RBDL_BUILD_ADDON_MUSCLE          OFF                                          
+      RBDL_BUILD_ADDON_MUSCLE_FITTIN   OFF                                           
+      RBDL_BUILD_ADDON_URDFREADER      OFF                                          
+      RBDL_BUILD_PYTHON_WRAPPER        ON                                           
+      RBDL_BUILD_STATIC                OFF                                          
+      RBDL_BUILD_TESTS                 ON                                           
+      RBDL_ENABLE_LOGGING              OFF                                          
+      RBDL_STORE_VERSION               OFF                q                          
+      RBDL_USE_PYTHON_2                OFF                                          
+      RBDL_USE_SIMPLE_MATH             OFF                                          
+
+    -Press 'c'. The option 'RUN_AUTOMATIC_TESTS' should appear. Set this to 'ON':
+
+      RUN_AUTOMATIC_TESTS              ON                                           
+
+    -Press 'c' again.
+    -If everything has gone fine, then you will see the option:
+        'Press [g] to generate and exit'
+     at the bottom of the terminal. 
+    -Press 'g'
+
+  12e. Build and install rbdl-orb
+
+    Now you're back in the terminal and ready to build rbdl. To speed things
+    up you can use the '-j' option to use multiple cores to build rbdl: 
+
+      make -j4
+
+    During the build process numerical tests will be run, and should all
+    pass without failure. If that is the case then run
+
+      sudo make install
+
+    Here you will need to run the 'sudo' command to install the python version
+    of rbdl library system wide.
+
+  12f. Update your .bashrc file so that python can find the python version of 
+      rbdl. To do this you need to add the path to 'rbdl-orb-release-build/python'
+      to the PYTHONPATH which can be done by adding the following line to your
+      .bashrc file:
+
+    export PYTHONPATH=$PYTHONPATH:/home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-build/python
+
+  12g. Open a terminal in the rbdl-orb directory and type
+
+    doxygen Doxyfile
+
+    Open rbdl-orb/dox/html/index.html in an internet browser
+    Doxygen has just built a webpage for the documentation that appears in
+    the header files of RBDL.
+
+13. Meshup (https://github.com/ORB-HD/MeshUp)
+
+  13a. Get the code
+    cd ~/dev/orbGitHubCode/
+    git clone https://github.com/ORB-HD/MeshUp.git
+
+  13b. Make the build and install folders  
+    mkdir MeshUp-build
+    mkdir MeshUp-install
+
+  13c. Run ccmake on MeshUp from the MeshUp-build folder and press 'c'. Set the 
+       CMAKE_BUILD_TYPE to 'Release' and update the install folder
+       to '/home/YOUR-USER-ID/dev/orbGitHubCode/MeshUp-install' unless 
+       you want a system-wide installation. Press 'c' again, you should see
+       something like this:
+
+      CMAKE_BUILD_TYPE                 Release
+      CMAKE_INSTALL_PREFIX             /home/YOUR-USER-ID/dev/orbGitHubCode/MeshUp-install
+      Qt5Core_DIR                      /usr/lib/x86_64-linux-gnu/cmake/Qt5Core
+      Qt5Gui_DIR                       /usr/lib/x86_64-linux-gnu/cmake/Qt5Gui
+      Qt5OpenGL_DIR                    /usr/lib/x86_64-linux-gnu/cmake/
+      Qt5Widgets_DIR                   /usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets 
+
+      If the Qt5 libraries are not found, try installing qtbase5-dev 
+      (command below). 
+
+        sudo apt install qtbase5-dev
+
+      Note that the author has not tried this, but instead had all of the 
+      necessary qt5 libraries from the installation of another large software 
+      package.
+
+  13d. Make and install Meshup:
+
+      make -j4
+      make install
+
+  13e. Update your .bashrc file so that you can call 'meshup' from the 
+       command line. To do so add the following lines to your .bashrc file:
+
+    export MESHUP=/home/YOUR-USER-ID/dev/orbGitHubCode/MeshUp-install/bin
+    export PATH=$PATH:$MESHUP
+
+  13f. To see if this worked:
+
+    -Start a new command shell (necessary so that the new .bashrc file is used)
+    -In the command shell type:
+
+      cd ~/dev/orbGitHubCode/MeshUp/models
+      meshup samplemodel.lua
+      
+    You should see a window popup that portrays a blocky humanoid body with 
+    a giant green sad monkey head on it.
+
+
+14. c3dfile: This library is required if you want to install puppeteer
+    
+    cd ~/dev/orbGitHubCode/
+    git clone https://github.com/ORB-HD/c3dfile.git
+
+    This should give you folder called c3dfile which is populated with other
+    files and folders.
+
+15. NOT REQUIRED TO RUN THE EXAMPLES. 
+  Puppeteer (https://github.com/ORB-HD/puppeteer)
+
+  15a. Get the code
+    cd ~/dev/orbGitHubCode/
+    git clone https://github.com/ORB-HD/puppeteer.git
+
+  15b. Copy the c3dfile folder (/dev/orbGitHubCode/c3dfile) into 
+       puppeteer's vendor folder (/dev/orbGitHubCode/puppeteer/vendor)
+
+  15c. Make the build and install folders  
+    mkdir puppeteer-build
+    mkdir puppeteer-install
+
+  15d. Run ccmake on puppeteer
+
+    cd puppeteer-build
+    ccmake ../puppeteer
+
+  15e. Press 'c' to configure the CMakeCache.txt file. Set the CMAKE_BUILD_TYPE
+       to 'Release' and the 'CMAKE_INSTALL_PREFIX' to 'puppeteer-install' unless
+       you would like a system wide installation (in this case do not manually
+       set CMAKE_INSTALL_PREFIX to anything - let cmake choose it). If everything
+       has worked correctly the output from ccmake should look like this:
+
+
+       CMAKE_BUILD_TYPE                 Release
+       CMAKE_INSTALL_PREFIX             /home/mjhmilla/dev/orbGitHubCode/puppeteer-install
+       Qt5Core_DIR                      /usr/lib/x86_64-linux-gnu/cmake/Qt5Core
+       Qt5Gui_DIR                       /usr/lib/x86_64-linux-gnu/cmake/Qt5Gui
+       Qt5Network_DIR                   /usr/lib/x86_64-linux-gnu/cmake/Qt5Network
+       Qt5OpenGL_DIR                    /usr/lib/x86_64-linux-gnu/cmake/Qt5OpenGL
+       Qt5WebKit_DIR                    /usr/lib/x86_64-linux-gnu/cmake/Qt5WebKit
+       Qt5Widgets_DIR                   /usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets
+       QtPropertyBrowser_BUILD_EXAMPL   OFF
+       RUN_AUTOMATIC_TESTS              OFF
+       VTK_DIR                          /usr/lib/cmake/vtk-6.3                           
+
+      Currently Puppeteer's CMakeLists.txt file is configured to only look for
+      a system-wide installation of rbdl. If you have installed rbdl to a 
+      particular folder you have you will need to press 't' (to look at the advanced 
+      options in ccmake) and the find the RBDL folders that are currently 
+      marked as NOTFOUND. You will have to set these folder to the correct 
+      paths manually. As an example, here is what these paths look like on my  
+      installation:
+
+      RBDL_GEOMETRY_LIBRARY            /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/lib/librbdl_geometry.so                          
+      RBDL_INCLUDE_DIR                 /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/include                                          
+      RBDL_LIBRARY                     /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/lib/librbdl.so                                   
+      RBDL_LUAMODEL_INCLUDE_DIR        /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/include                                          
+      RBDL_LUAMODEL_LIBRARY            /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/lib/librbdl_luamodel.so                          
+      RBDL_MUSCLE_INCLUDE_DIR          /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/include                                          
+      RBDL_MUSCLE_LIBRARY              /home/YOUR-USER-ID/dev/orbGitHubCode/rbdl-orb-release-install/lib/librbdl_muscle.so  
+
+  15f.           
+----------
+
+

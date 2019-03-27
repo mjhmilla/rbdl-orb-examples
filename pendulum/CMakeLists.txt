@@ -1,0 +1,53 @@
+PROJECT (pendulumDynamics)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+SET(CUSTOM_RBDL_PATH "" CACHE PATH "Path to specific RBDL Installation")
+
+SET(TARGETS  	
+	pendulumForwardDynamics
+	CACHE STRING
+	"Target to build"	
+)
+LIST(REMOVE_DUPLICATES TARGETS)
+
+LIST( APPEND CMAKE_MODULE_PATH
+  ${PROJECT_SOURCE_DIR}/CMake
+  ${PROJECT_SOURCE_DIR}/CMake/Modules)
+
+SET(BOOST_INC_DIR
+  /usr/include
+  CACHE STRING
+  "Location of the BOOST header files")
+
+FIND_PACKAGE ( RBDL COMPONENTS LUAMODEL)
+FIND_PACKAGE (Eigen3 3.0.0 REQUIRED)
+FIND_PACKAGE (Lua51 REQUIRED)
+
+
+INCLUDE_DIRECTORIES ( 
+	${RBDL_INCLUDE_DIR} 
+	${EIGEN3_INCLUDE_DIR} 
+	${LUA_INCLUDE_DIR}
+  ${BOOST_INC_DIR} 
+)
+
+
+ADD_EXECUTABLE(${TARGETS} 
+               src/${TARGETS}.cc 
+               src/csvtools.h 
+               src/csvtools.cc)	  
+	
+TARGET_LINK_LIBRARIES ( 
+	${TARGETS}
+	${RBDL_LIBRARY}
+	${RBDL_LUAMODEL_LIBRARY}
+	${LUA_LIBRARIES}	
+	)
+
+
+message("CUSTOM_RBDL_PATH         :" ${CUSTOM_RBDL_PATH})
+message("RBDL_INCLUDE_DIR         :" ${RBDL_INCLUDE_DIR})
+message("RBDL_LIBRARY             :" ${RBDL_LIBRARY})
+message("RBDL_LUAMODEL_LIBRARY    :" ${RBDL_LUAMODEL_LIBRARY})
+message("LUA_LIBRARIES            :" ${LUA_LIBRARIES})
+message("EIGEN3_INCLUDE_DIR       :" ${EIGEN3_INCLUDE_DIR})
