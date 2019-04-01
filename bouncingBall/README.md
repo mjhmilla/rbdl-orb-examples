@@ -42,6 +42,12 @@ friction forces to a bouncing ball. To get started:
 High Level Overview
 ================================================================================
 
+Before getting started be aware:
+  
+  Time commitment: 
+    30-45 minutes
+
+
 1. The state of the ball is used to evaluate the position and velocity of the 
 point of contact between a sphere and a plane. This is a compliant model so the 
 sphere is allowed to penetrate the plane. The point of contact is the point on 

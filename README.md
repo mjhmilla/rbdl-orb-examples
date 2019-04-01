@@ -3,7 +3,10 @@ A set of examples to accompany rbdl-orb to give you a detailed tour of the tools
 
 To get started:
 
-1. Read INSTALL.txt
+1. Read the INSTALL.txt
+    You probably have to install something as all of the examples make use
+    of the rbdl-orb repo that is on Git. 
+     
 2. Each example contains a README.md which contains instructions to run the 
    example, a tour through the code, and literature references (when 
    appropriate, and sparingly used).

@@ -171,7 +171,7 @@ int main (int argc, char* argv[]) {
     printf("1. Forward Dynamics \n");
     printf("==============================\n");    
 
-    // ry0 x1,y1,z1,rx1,ry1,rz1
+    // rx0 x1,y1,z1,rx1,ry1,rz1
     //  0,  1, 2, 3,  4,  5,  6,
     q[2] = 1.0;
 

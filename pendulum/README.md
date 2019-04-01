@@ -31,11 +31,16 @@ uses Boost to numerically integrate its movements. To get started
 
 6. To view an animation, from a terminal in the 'pendulum' folder run
 
-  meshup model/pendulum_luamodel.lua output/meshup.csv
+  meshup model/pendulum.lua output/meshup.csv
 
 ================================================================================
 Detailed Code Tour
 ================================================================================
+
+Before getting started be aware:
+  
+  Time commitment: 
+    30-45 minutes
 
 1. RBDL is a C++ implementation of Roy Featherstone's recursive order-n 
    algorithms which makes use of spatial vectors. If you are going to be using
@@ -105,6 +110,179 @@ Detailed Code Tour
   
   3j. Now the data we have accumulated is written to file
 
+
+================================================================================
+Quick CMake Tour
+================================================================================
+
+If you are also new to CMake and have just started using it this tutorial is
+for you. This is a very basic introduction. CMake is a large tool that has
+excellent documentation. When you get stuck refer to the documentation online.
+If the documentation is not answering your question, look for other example
+files.
+
+Before getting started be aware:
+  
+  Time commitment: 
+    30-45 minutes
+
+
+What is CMake? 
+  From the webpage (https://cmake.org/)
+  CMake is an open-source, cross-platform family of tools designed to build, 
+  test and package software. 
+
+What skills do I need to develop with CMake?
+  
+  1. Build software: If you have gotten this far you have succeeded. This will
+     not be covered in any more detail here.
+
+  2. Write CMakeLists.txt files: If you will be writing your own C++ programs.    
+     Open CMakeLists.txt to see what a basic CMakeLists file looks like. Look
+     for the comments below the in the CMakeLists.txt file - these cover the 
+     basic things you will most often need to do in your CMakeLists.txt file:
+
+    2a. Give the project to build a name 
+
+    2b. Specify a minimum version of CMake to use: this is important! When you
+        write your own CMakeLists.txt files insert you own version number 
+        of CMake here.
+
+    2c. Assign the names of the programs/libraries that you wish to build
+        to a list called 'TARGETS'
+
+    2d. Add the folder 'CMake' & 'CMake/Modules' to be included: these contain
+        project-specific CMake files. If you open the folder 'CMake' you 
+        should find two files which have been written to find Eigen3 and 
+        RBDL with the following names.
+
+          FindEigen3.cmake  
+          FindRBDL.cmake
+
+        Note: the $ is used to tell CMake to resolve a variable into a string.
+        Thus ${PROJECT_SOURCE_DIR} will turn into the path to the project
+        source directory.
+
+    2e. Tell CMake what packages are needed to build this software and 
+        have it try to find these dependencies. The output of this process
+        is several variables in CMake that define where the libraries and
+        header files are located for each package. To see what these 
+        variables are called you need to look at the 'Find ... .cmake' file
+        for this package, or look for the package control (*.pc file) for this 
+        package. A bit more on this later.
+
+        -FIND_PACKAGE( )
+         This is a command that CMake provides which will search likely, and
+         recommended locations, for a specific library in a manner that works
+         on any operating system. When possible use these commands exclusively.
+
+        -SET(CUSTOM_RBDL_PATH "" CACHE PATH "Path to specific RBDL Installation")
+         The variable CUSTOM_RBDL_PATH is used in combination with 
+         CMake/FindRBDL.cmake to find a specific installation of RBDL
+
+
+    2f. Tell CMake where the header files (these are folders that have header 
+        files). Here there is a mixture of methods used:
+
+        INCLUDE_DIRECTORIES ( 
+          ${RBDL_INCLUDE_DIR} 
+          ${EIGEN3_INCLUDE_DIR} 
+          ${LUA_INCLUDE_DIR}
+          ${BOOST_INC_DIR} 
+        )        
+
+        The variables RBDL_INCLUDE_DIR and EIGEN3_INCLUDE_DIR are variables
+        that are set by the CMake/FindRBDL.cmake and CMake/FindEigen3.cmake 
+        files. To know what variables you have to work with you need to open
+        these files and have a look at them.
+
+        The variable BOOST_INC_DIR is manually set, and hardcoded to /usr/local.
+        While this is quick and easy to do it is not recommended: the person
+        using this CMake file may have put the Boost installation somewhere
+        else. Further, this path is not cross-platform: Windows does not have
+        a /usr/local file. If this is running on your own machine it does not
+        matter a great deal what you do. If you want to contribute this to
+        a cross-platform code this would be a big problem.
+
+
+    2g. Tell CMake what executable(s) you want to build (the Targets naturally)
+        and what files are needed to build the software
+
+    2h. Tell CMake what libraries are used at runtime. Here the pendulum makes
+        use of 4 libraries (*.so files on Ubuntu): the library of the pendulum,
+        the main rbdl library, the rbdl-lua library, and the lua libraries. 
+        If you open /orbGitHubCode/rbdl-orb-release-install/lib you can see
+        the various libraries that were made during the build process
+
+          librbdl_geometry.so        
+          librbdl_luamodel.so.2.6.0  
+          librbdl.so
+          librbdl_geometry.so.2.6.0  
+          librbdl_muscle.so          
+          librbdl.so.2.6.0
+          librbdl_luamodel.so        
+          librbdl_muscle.so.2.6.0    
+
+        If you look closely at the sizes and file types you should see that
+        some files are actual libraries (e.g. librbdl_geometry.so.2.6.0) while 
+        others are just links to libraries (e.g. librbdl_geometry.so) which 
+        take up much less memory.
+
+        As before the variables RBDL_LIBRARY, RBDL_LUAMODEL_LIBRARY, and 
+        LUA_LIBRARIES are all variables that have been set in the respective
+        'Find ... .cmake' files that exist for each of these packages
+
+    2i. Optional: Echo information back to the user. I have many versions of 
+        RBDL on my machine. To ensure that CMake is using the correct library
+        here the paths to the include files and libraries of RBDL are printed
+        to the screen.
+
+
+  3. Write/debug/use FindXXXX.cmake files: These are files that are found in
+     the CMake folder of this directory which can be used to help CMake find
+     libraries. To see an example open CMake/FindRBDL.cmake
+
+     3a. This file is going to look for rbdl, rbdl-luamodel, rbdl-urdfreader,
+         rbdl-geometry, and rbdl-muscle. Here we make a bunch of boolean flags
+         to indicate if these resources have been found and initialize them 
+         to false.
+
+     3b. All of the variables that this FindRBDL.cmake file will populate, 
+         if these resources exist, are listed here.
+
+
+     3c. This script has two different modes:
+
+        If there is a CUSTOM_RBDL_PATH: then this path is used to search 
+        for Rbdl
+
+        If there is no CUSTOM_RBDL_PATH, then a bunch of typical install
+        locations are used. Note that at the present time these typical install
+        include paths that will only work on linux
+
+     3d. The validity of each path is checked by using the FIND_PATH 
+         command to look for a specific file. In the case of the 
+         RBDL_INCLUDE_DIR, this variable gets assigned the path of 
+         ${CUSTOM_RBDL_PATH}/include if CMake can find rbdl/rbdl.h from
+        ${CUSTOM_RBDL_PATH}/include.
+
+     3e. Similarly the validity of a path to a library is checked by looking
+         to see if a specific library exists using the FIND_LIBRARY command.
+         Note that you do not need to put the file type on the end of the 
+         library name, nor a prefix of 'lib': CMake will do this for you 
+         in a way that is cross-platform.
+
+     3f. If there is no CUSTOM_RBDL_PATH given then FIND_PATH and FIND_LIBRARY
+         commands are used but with substantial HINTS, or places to look
+
+     3g. If we've gotten to this point then either all include directories 
+         and libraries have been found, some have been found, or none have 
+         been found. All of the code below is going through what the user
+         asked for, seeing if it was found, and if not issuing an error.
+                
+     3h. Here all of the specific paths and libraries are marked as advanced
+         which means that they will not appear in the CMake gui unless the 
+         user toggles to the advanced mode.                
 
 ================================================================================
 Example Output

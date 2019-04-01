@@ -11,8 +11,8 @@ Note:
 Getting Started
 ================================================================================
 
-1. Each example contains its own README.md file that has instructions to run the
-   example, and then a detailed guided tour of the code.
+1. Each example contains its own README.md file that has 'quick start' 
+   instructions to run the example, and then a detailed guided tour of the code.
 
 2. Prior to attempting to run the examples, please check that your installation
    has the necessary libraries. These examples make use of extra libraries 
@@ -22,14 +22,14 @@ Getting Started
 ================================================================================
 Minimum System Requirements
 ================================================================================
-
-  All examples except and 'constrainedDoublePendulum' and 
-  'walkingInverseDynamics' should run with 
-
-  :RBDL   :any version more recent than July 2018
-  :Lua51
+  
+  :CMake      : cmake version 3.10.2 
+  
+  :RBDL       : rbdl-orb repository from github (details below)
+  :Lua51      
   :Boost
-  :Meshup :any version
+  :MeshUp     : MeshUp from the ORB-HD g
+
 
   The 'constrainedDoublePendulum' example requires rbdl-orb. See below
   for installation instructions.
@@ -44,12 +44,20 @@ Minimum System Requirements
 Setting up a new system
 ================================================================================
 
+Before getting started be aware:
+  
+  Time commitment: 
+    60 - 120 minutes
+  Typical sticking points:
+    Installation of the graphics libraries required for MeshUp & Puppeteer
+    Installation of rbdl-python
+  This has been built on both Ubuntu 16 & 18
+
 0. Prior to Installation
 
     Before proceeding, open up a terminal and type
       sudo apt update
       sudo apt upgrade
-
 
 1. Install git and mercurial
 
@@ -80,14 +88,15 @@ Setting up a new system
 
 6. Install graphics libraries needed by Meshup & Puppeteer 
 
-    sudo apt install ffmpeg-dev
+    sudo apt install ffmpeg
+    sudo apt install ffmpeg:i386    
     sudo apt install libavutil-dev
     sudo apt install libavcodec-dev
     sudo apt install libavutil-dev 
-    sudo apt install libav-tools
     sudo apt install libavformat-dev
     sudo apt install libswscale-dev
-
+    sudo apt install libvtk6-qt-dev
+    
 7. Install Lua51 which is need so that RBDL can read in Lua-based models
 
     sudo apt install lua5.1
@@ -199,8 +208,8 @@ Setting up a new system
 
       sudo make install
 
-    Here you will need to run the 'sudo' command to install the python version
-    of rbdl library system wide.
+    Here you will need to run the 'sudo' command to install the python 
+    '.egg-info' file in your usr/local directory.
 
   12f. Update your .bashrc file so that python can find the python version of 
       rbdl. To do this you need to add the path to 'rbdl-orb-release-build/python'

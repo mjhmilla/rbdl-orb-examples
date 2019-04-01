@@ -2,6 +2,18 @@ author Matthew Millard
 date   : 27 March 2019
 version: 0.1
 
+Before getting started note that typically the install process required to
+get this example to work is the most time consuming. The most common place to
+get stuck is to have problems installing python3 (particularly if your version
+of CMake is out of date) and getting the rbdl-python wrapper to build correctly. 
+
+However the time spent installing python3 there is a big reward: you can now
+call RBDL from python. This means you do not have to spend time compiling 
+C++ code, nor do you have to write a CMakeLists.txt file. In addition you can
+now seamlessly use all of the libraries in python3 and associated libraries 
+directly with RBDL: this results in a tremendous timesavings during the 
+development phase of a typical project.
+
 ================================================================================
 Quick Start
 ================================================================================
@@ -53,6 +65,7 @@ motion capture data that is recorded in a gait lab.
 ================================================================================
 Detailed Code Tour
 ================================================================================
+
 
 1. Open gait912.lua and have a look at it. This model is more complex than
    what you've seen previously and was generated with the help of a tool

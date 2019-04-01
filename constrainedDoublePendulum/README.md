@@ -39,11 +39,17 @@ finally Boost is used to numerically integrate its movements. To get started
 6. To view an animation, from a terminal in the 'constrainedDoublePendulum' 
   folder run
 
-  meshup model/pendulum_luamodel.lua output/meshup.csv
+  meshup model/constrainedDoublePendulum.lua output/meshup.csv
 
 ================================================================================
 Detailed Code Tour
 ================================================================================
+
+Before getting started be aware:
+  
+  Time commitment: 
+    30-45 minutes
+
 
 This simple example reads in a double pendulum model. To begin, open
 model/constrainedDoublePendulum.lua in a text editor. As before the comments
